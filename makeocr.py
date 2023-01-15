@@ -31,6 +31,9 @@ filesPictures = os.listdir(MEDIA_DATA_DIR)
 def process_ocr(file):
     if file.endswith(".png") or file.endswith(".jpg"):
         (media_id, page, ext) = sharedutils.files_media_to_media_id_page_ext(file)
+        if media_id not in sharedutils.filtered_id_to_language:
+            print("Skipping " + file + " because it's not in index")
+            return
         language = sharedutils.filtered_id_to_language[media_id]
         if language not in languages_to_tesseract: return
         if language not in desired_languages: return
