@@ -40,16 +40,15 @@ def http_get(media_id, page, filename=None, session=None):
         filename = DATA_DIR + media_id_page_to_file(media_id, page)
     ext = filtered_id_ext[media_id]
     url = "https://i3.nhentai.net/galleries/" + str(media_id) + "/" + str(page) + ext
-    parsed_url = urlparse(url)
     # print(url)
     with session.get(url, stream=True) as r:
         if r.status_code != 200:
-            return None
+             return None
         with open(filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=8192):
                 f.write(chunk)
 
-    return parsed_url.hostname + parsed_url.path.replace("/", "_"), filename
+    return filename
 
 
 # print(http_get(filtered_id[1], 1)[0])
@@ -67,11 +66,15 @@ def transfer(media_id):
     while True:
         filename = media_id_page_to_file(media_id, page_counter)
         page_counter = page_counter + 1
-        if filename in alreadyHere: continue
+        if filename in alreadyHere:
+            results.append(filename)
+            continue
         data = http_get(media_id, page_counter, DATA_DIR + filename, session)
-
-        # results.append(upload(data, session))
-    # return actual_id, results
+        if data is not None:
+            results.append(data)
+        else:
+            break
+    return actual_id, results
 
 
 print(transfer(filtered_id[1]))
