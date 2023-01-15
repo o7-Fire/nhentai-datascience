@@ -26,7 +26,7 @@ print(possible_languages)
 os.environ['OMP_THREAD_LIMIT'] = '1'
 
 filesPictures = os.listdir(MEDIA_DATA_DIR)
-
+alreadyHere = os.listdir(OUTPUT_DIR)
 
 def process_ocr(file):
     if file.endswith(".png") or file.endswith(".jpg"):
@@ -37,6 +37,10 @@ def process_ocr(file):
         language = sharedutils.filtered_id_to_language[media_id]
         if language not in languages_to_tesseract: return
         if language not in desired_languages: return
+        filenOutputName = file + ".json"
+        if filenOutputName in alreadyHere:
+            #print("Skipping " + file + " because it's already done")
+            return
         #print(file)
         #print(language)
         output = pytesseract.image_to_data(Image.open(MEDIA_DATA_DIR + file), lang=languages_to_tesseract[language],
@@ -53,7 +57,7 @@ def process_ocr(file):
         #print(output["text"])
         #print()
 
-        with open(OUTPUT_DIR + file + ".json", "w") as f:
+        with open(OUTPUT_DIR + filenOutputName, "w") as f:
             json.dump(output, f)
 
 
