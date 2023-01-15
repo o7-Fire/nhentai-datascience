@@ -6,6 +6,7 @@ import os
 import json
 
 OUTPUT_DIR = "ocr/"
+MEDIA_DATA_DIR = "media/"
 
 possible_languages = []
 desired_languages = ["english"]
@@ -20,9 +21,9 @@ for v in sharedutils.filtered_id_to_language.values():
 
 print(possible_languages)
 
-DATA_DIR = "media/"
 
-filesPictures = os.listdir(DATA_DIR)\
+
+filesPictures = os.listdir(MEDIA_DATA_DIR)\
 
 # i3.nhentai.net_galleries_988129_1.jpg
 for file in filesPictures:
@@ -34,7 +35,7 @@ for file in filesPictures:
         if language not in desired_languages: continue
         print(file)
         print(language)
-        output = pytesseract.image_to_data(Image.open(DATA_DIR + file), lang=languages_to_tesseract[language], output_type=pytesseract.Output.DICT)
+        output = pytesseract.image_to_data(Image.open(MEDIA_DATA_DIR + file), lang=languages_to_tesseract[language], output_type=pytesseract.Output.DICT)
         output['nhentai'] = {
             "id": sharedutils.filtered_id_to_id[media_id],
             "media_id": media_id,
