@@ -4,6 +4,8 @@ import pytesseract
 import sharedutils
 import os
 import json
+from tqdm import tqdm
+from multiprocessing import Pool
 
 OUTPUT_DIR = "ocr/"
 MEDIA_DATA_DIR = "media/"
@@ -21,33 +23,36 @@ for v in sharedutils.filtered_id_to_language.values():
 
 print(possible_languages)
 
+os.environ['OMP_THREAD_LIMIT'] = '1'
+
+filesPictures = os.listdir(MEDIA_DATA_DIR)
 
 
-filesPictures = os.listdir(MEDIA_DATA_DIR)\
-
-# i3.nhentai.net_galleries_988129_1.jpg
-for file in filesPictures:
+def process_ocr(file):
     if file.endswith(".png") or file.endswith(".jpg"):
-
         (media_id, page, ext) = sharedutils.files_media_to_media_id_page_ext(file)
         language = sharedutils.filtered_id_to_language[media_id]
-        if language not in languages_to_tesseract: continue
-        if language not in desired_languages: continue
-        print(file)
-        print(language)
-        output = pytesseract.image_to_data(Image.open(MEDIA_DATA_DIR + file), lang=languages_to_tesseract[language], output_type=pytesseract.Output.DICT)
+        if language not in languages_to_tesseract: return
+        if language not in desired_languages: return
+        #print(file)
+        #print(language)
+        output = pytesseract.image_to_data(Image.open(MEDIA_DATA_DIR + file), lang=languages_to_tesseract[language],
+                                           output_type=pytesseract.Output.DICT)
         output['nhentai'] = {
             "id": sharedutils.filtered_id_to_id[media_id],
             "media_id": media_id,
             "page": page,
             "ext": ext,
             "language": language,
+            'filename': file
 
         }
-        print(output["text"])
-        print()
+        #print(output["text"])
+        #print()
 
         with open(OUTPUT_DIR + file + ".json", "w") as f:
             json.dump(output, f)
 
 
+with Pool(4) as p:
+    r = list(tqdm(p.imap(process_ocr, filesPictures), total=len(filesPictures)))

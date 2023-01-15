@@ -9,7 +9,7 @@ import json
 from multiprocessing import Pool
 from urllib.parse import urlparse
 from sharedutils import filtered_id, filtered_id_to_id, filtered_id_ext
-
+from tqdm import tqdm
 DATA_DIR = "media/"
 
 last_time_logging = time.time()
@@ -60,7 +60,7 @@ def transfer(media_id):
     actual_id = filtered_id_to_id[media_id]
     results = []
     session = requests.Session()
-    print(str(actual_id) + ": " + str(media_id))
+    #print(str(actual_id) + ": " + str(media_id))
     while True:
         filename = media_id_page_to_file(media_id, page_counter)
         page_counter = page_counter + 1
@@ -77,4 +77,4 @@ def transfer(media_id):
 print(transfer(filtered_id[1]))
 
 with Pool(64) as p:
-    transfer_results = p.map(transfer, filtered_id)
+    transfer_results = list(tqdm(p.imap(transfer, filtered_id), total=len(filtered_id)))
