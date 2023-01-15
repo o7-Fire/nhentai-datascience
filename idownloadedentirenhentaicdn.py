@@ -33,15 +33,17 @@ def media_id_page_to_file(media_id, page):
     return parsed_url.hostname + parsed_url.path.replace("/", "_").strip()
 
 
-def http_get(media_id, page):
+def http_get(media_id, page, session=None):
+    if session is None:
+        session = requests.Session()
     ext = filtered_id_ext[media_id]
     url = "https://i3.nhentai.net/galleries/" + str(media_id) + "/" + str(page) + ext
     parsed_url = urlparse(url)
     # print(url)
-    r = requests.get(url)
+    r = session.get(url)
     # url = re.sub('[^0-9a-zA-Z.]+', '_', url)
     url = parsed_url.hostname + parsed_url.path.replace("/", "_")
-    print(url)
+    #print(url)
     if r.status_code == 200:
         return url, r.content
     return None
@@ -49,21 +51,21 @@ def http_get(media_id, page):
 
 print(http_get(filtered_id[1], 1)[0])
 
-alreadyHere = os.listdir()
+alreadyHere = os.listdir(DATA_DIR)
 print("Already Here: " + str(len(alreadyHere)))
 
 
-def transfer(id):
+def transfer(media_id):
     page_counter = 1
-    actual_id = filtered_id_to_id[id]
+    actual_id = filtered_id_to_id[media_id]
     results = []
     session = requests.Session()
-    print(str(actual_id) + ": " + str(id))
+    print(str(actual_id) + ": " + str(media_id))
     while True:
-        filename = media_id_page_to_file(id, page_counter)
+        filename = media_id_page_to_file(media_id, page_counter)
         page_counter = page_counter + 1
         if filename in alreadyHere: continue
-        data = http_get(id, page_counter)
+        data = http_get(media_id, page_counter, session)
         if data is None: break
         f = open(DATA_DIR+filename, "wb")
         f.write(data[1])

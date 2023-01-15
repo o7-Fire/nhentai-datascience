@@ -71,8 +71,8 @@ def process_jason(filename, ):
                         data['language'] = None
                     return data
                 except Exception:
-                    #print("Error processing " + filename)
-                    #print(json.dumps(data, indent=4, sort_keys=True))
+                    # print("Error processing " + filename)
+                    # print(json.dumps(data, indent=4, sort_keys=True))
                     return None
                 # print(name)
                 # print(iBeSeeth)
@@ -119,7 +119,6 @@ if index_failed:
                         print(logggg)
                         last_time_logging = time.time()
 
-
 print("Finished processing files")
 
 if index_failed:
@@ -152,3 +151,11 @@ if len(filtered_id) == 0:
     sys.exit(1)
 else:
     print("Found %d results" % len(filtered_id))
+
+
+# i3.nhentai.net_galleries_988129_1.jpg
+# 988129, 1, jpg
+
+def files_media_to_media_id_page_ext(filename):
+    split = filename.split("_")
+    return split[2], split[3].split(".")[0], split[3].split(".")[1]

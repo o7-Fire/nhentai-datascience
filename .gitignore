@@ -39,8 +39,9 @@
 # *.ipr
 id_to_data.json
 media/
+ocr/
 .idea
-nhentai-data
+nhentai-data/
 # CMake
 cmake-build-*/
 
