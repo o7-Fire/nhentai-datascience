@@ -17,8 +17,6 @@ WORKERS = 16
 last_time_logging = time.time()
 start_time = time.time()
 
-
-
 print(time.time() - start_time)
 print(filtered_id[1])
 print(filtered_id_ext[filtered_id[1]])
@@ -39,7 +37,7 @@ def http_get(media_id, page, filename=None, session=None):
     if session is None:
         session = requests.Session()
     if filename is None:
-        filename =  DATA_DIR+media_id_page_to_file(media_id, page)
+        filename = DATA_DIR + media_id_page_to_file(media_id, page)
     ext = filtered_id_ext[media_id]
     url = "https://i3.nhentai.net/galleries/" + str(media_id) + "/" + str(page) + ext
     parsed_url = urlparse(url)
@@ -54,7 +52,7 @@ def http_get(media_id, page, filename=None, session=None):
     return parsed_url.hostname + parsed_url.path.replace("/", "_"), filename
 
 
-#print(http_get(filtered_id[1], 1)[0])
+# print(http_get(filtered_id[1], 1)[0])
 
 alreadyHere = os.listdir(DATA_DIR)
 print("Already Here: " + str(len(alreadyHere)))
@@ -65,12 +63,12 @@ def transfer(media_id):
     actual_id = filtered_id_to_id[media_id]
     results = []
     session = requests.Session()
-    #print(str(actual_id) + ": " + str(media_id))
+    # print(str(actual_id) + ": " + str(media_id))
     while True:
         filename = media_id_page_to_file(media_id, page_counter)
         page_counter = page_counter + 1
         if filename in alreadyHere: continue
-        data = http_get(media_id, page_counter, DATA_DIR+filename, session)
+        data = http_get(media_id, page_counter, DATA_DIR + filename, session)
 
         # results.append(upload(data, session))
     # return actual_id, results
