@@ -10,7 +10,9 @@ from multiprocessing import Pool
 from urllib.parse import urlparse
 from sharedutils import filtered_id, filtered_id_to_id, filtered_id_ext
 from tqdm import tqdm
+
 DATA_DIR = "media/"
+WORKERS = 16
 
 last_time_logging = time.time()
 start_time = time.time()
@@ -76,5 +78,5 @@ def transfer(media_id):
 
 print(transfer(filtered_id[1]))
 
-with Pool(64) as p:
+with Pool(WORKERS) as p:
     transfer_results = list(tqdm(p.imap(transfer, filtered_id), total=len(filtered_id)))
