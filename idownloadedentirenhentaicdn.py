@@ -1,15 +1,12 @@
 import os
-import json
 import time
-import requests
-import re
-import zlib
-import sys
-import json
 from multiprocessing import Pool
 from urllib.parse import urlparse
-from sharedutils import filtered_id, filtered_id_to_id, filtered_id_ext
+
+import requests
 from tqdm import tqdm
+
+from sharedutils import filtered_id, filtered_id_to_id, filtered_id_ext
 
 DATA_DIR = "media/"
 WORKERS = 16
@@ -77,7 +74,10 @@ def transfer(media_id):
     return actual_id, results
 
 
-print(transfer(filtered_id[1]))
 
-with Pool(WORKERS) as p:
-    transfer_results = list(tqdm(p.imap(transfer, filtered_id), total=len(filtered_id)))
+
+
+if __name__ == '__main__':
+    print(transfer(filtered_id[1]))
+    with Pool(WORKERS) as p:
+        transfer_results = list(tqdm(p.imap(transfer, filtered_id), total=len(filtered_id)))

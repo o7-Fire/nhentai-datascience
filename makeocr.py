@@ -1,14 +1,15 @@
 from PIL import Image
-
+import PIL
 import pytesseract
 import sharedutils
 import os
 import json
 from tqdm import tqdm
 from multiprocessing import Pool
+import idownloadedentirenhentaicdn
 
 OUTPUT_DIR = "ocr/"
-MEDIA_DATA_DIR = "media/"
+MEDIA_DATA_DIR = idownloadedentirenhentaicdn.DATA_DIR
 
 possible_languages = []
 desired_languages = ["english"]
@@ -28,6 +29,7 @@ os.environ['OMP_THREAD_LIMIT'] = '1'
 filesPictures = os.listdir(MEDIA_DATA_DIR)
 alreadyHere = os.listdir(OUTPUT_DIR)
 
+
 def process_ocr(file):
     if file.endswith(".png") or file.endswith(".jpg"):
         (media_id, page, ext) = sharedutils.files_media_to_media_id_page_ext(file)
@@ -39,11 +41,21 @@ def process_ocr(file):
         if language not in desired_languages: return
         filenOutputName = file + ".json"
         if filenOutputName in alreadyHere:
-            #print("Skipping " + file + " because it's already done")
+            # print("Skipping " + file + " because it's already done")
             return
-        #print(file)
-        #print(language)
-        output = pytesseract.image_to_data(Image.open(MEDIA_DATA_DIR + file), lang=languages_to_tesseract[language],
+        # print(file)
+        # print(language)
+        try:
+            image = Image.open(MEDIA_DATA_DIR + file)
+        except PIL.UnidentifiedImageError:
+            os.remove(MEDIA_DATA_DIR + file)
+            file = idownloadedentirenhentaicdn.http_get(media_id, page)
+            try:
+                image = Image.open(MEDIA_DATA_DIR + file)
+            except PIL.UnidentifiedImageError:
+                print("Da hood trying to download corrupted image but the downloaded image is corrupted" + str(file))
+                return
+        output = pytesseract.image_to_data(image, lang=languages_to_tesseract[language],
                                            output_type=pytesseract.Output.DICT)
         output['nhentai'] = {
             "id": sharedutils.filtered_id_to_id[media_id],
@@ -54,8 +66,8 @@ def process_ocr(file):
             'filename': file
 
         }
-        #print(output["text"])
-        #print()
+        # print(output["text"])
+        # print()
 
         with open(OUTPUT_DIR + filenOutputName, "w") as f:
             json.dump(output, f)
