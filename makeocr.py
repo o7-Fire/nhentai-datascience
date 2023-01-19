@@ -10,6 +10,7 @@ import idownloadedentirenhentaicdn
 
 OUTPUT_DIR = "ocr/"
 MEDIA_DATA_DIR = idownloadedentirenhentaicdn.DATA_DIR
+REMOVE_IMAGE_THAT_NOT_INDEXED = False
 
 possible_languages = []
 desired_languages = ["english"]
@@ -34,7 +35,10 @@ def process_ocr(file):
     if file.endswith(".png") or file.endswith(".jpg"):
         (media_id, page, ext) = sharedutils.files_media_to_media_id_page_ext(file)
         if media_id not in sharedutils.filtered_id_to_language:
-            print("Skipping " + file + " because it's not in index")
+            if REMOVE_IMAGE_THAT_NOT_INDEXED:
+                os.remove(MEDIA_DATA_DIR + file)
+            else:
+                print("Skipping " + file + " because it's not in index")
             return
         language = sharedutils.filtered_id_to_language[media_id]
         if language not in languages_to_tesseract: return
