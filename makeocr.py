@@ -27,7 +27,7 @@ print(possible_languages)
 
 os.environ['OMP_THREAD_LIMIT'] = '1'
 
-filesPictures = os.listdir(MEDIA_DATA_DIR)
+filesPictures = idownloadedentirenhentaicdn.alreadyHere
 alreadyHere = os.listdir(OUTPUT_DIR)
 
 
