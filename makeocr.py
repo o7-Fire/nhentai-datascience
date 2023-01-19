@@ -12,6 +12,8 @@ OUTPUT_DIR = "ocr/"
 MEDIA_DATA_DIR = idownloadedentirenhentaicdn.DATA_DIR
 REMOVE_IMAGE_THAT_NOT_INDEXED = False
 
+PIL.ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 possible_languages = []
 desired_languages = ["english"]
 languages_to_tesseract = {
@@ -59,22 +61,26 @@ def process_ocr(file):
             except PIL.UnidentifiedImageError:
                 print("Da hood trying to download corrupted image but the downloaded image is corrupted" + str(file))
                 return
-        output = pytesseract.image_to_data(image, lang=languages_to_tesseract[language],
-                                           output_type=pytesseract.Output.DICT)
-        output['nhentai'] = {
-            "id": sharedutils.filtered_id_to_id[media_id],
-            "media_id": media_id,
-            "page": page,
-            "ext": ext,
-            "language": language,
-            'filename': file
+        try:
+            output = pytesseract.image_to_data(image, lang=languages_to_tesseract[language],
+                                               output_type=pytesseract.Output.DICT)
+            output['nhentai'] = {
+                "id": sharedutils.filtered_id_to_id[media_id],
+                "media_id": media_id,
+                "page": page,
+                "ext": ext,
+                "language": language,
+                'filename': file
 
-        }
-        # print(output["text"])
-        # print()
+            }
+            # print(output["text"])
+            # print()
 
-        with open(OUTPUT_DIR + filenOutputName, "w") as f:
-            json.dump(output, f)
+            with open(OUTPUT_DIR + filenOutputName, "w") as f:
+                json.dump(output, f)
+        except Exception as e:
+            print("Error processing: " + str(file) + str(e))
+
 
 
 with Pool(4) as p:
