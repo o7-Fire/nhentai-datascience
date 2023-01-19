@@ -1,5 +1,4 @@
-from PIL import Image
-from PIL import ImageFIle
+from PIL import Image, ImageFIle
 import PIL
 import pytesseract
 import sharedutils
