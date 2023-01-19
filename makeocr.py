@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageFIle
 import PIL
 import pytesseract
 import sharedutils
@@ -12,7 +12,7 @@ OUTPUT_DIR = "ocr/"
 MEDIA_DATA_DIR = idownloadedentirenhentaicdn.DATA_DIR
 REMOVE_IMAGE_THAT_NOT_INDEXED = False
 
-PIL.ImageFile.LOAD_TRUNCATED_IMAGES = True
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 possible_languages = []
 desired_languages = ["english"]
